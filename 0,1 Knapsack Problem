@@ -1,0 +1,99 @@
+
+// Recursive Solution
+    int solveRec(int W, int wt[], int val[], int index)
+    {
+        if(index == 0)
+        {
+            if(wt[0] <= W)
+            {
+                return val[0];
+            }
+            else{
+                return 0;
+            }
+        }
+        
+        int inc = 0;
+        if(wt[index] <= W)
+            inc = val[index] + solveRec(W - wt[index], wt, val, index -1);
+        int exc = 0 + solveRec(W, wt, val, index-1);
+        
+        return max(inc, exc);
+    }
+    
+    //Memoization Solution
+    int solveMem(int W, int wt[], int val[], int index, vector<vector<int>>& dp)
+    {
+       if(index == 0)
+        {
+            if(wt[0] <= W)
+            {
+                return val[0];
+            }
+            else{
+                return 0;
+            }
+        }
+        if(dp[index][W]!=-1)
+        {
+            return dp[index][W];
+        }
+        
+        int inc = 0;
+        if(wt[index] <= W)
+            inc = val[index] + solveMem(W - wt[index], wt, val, index-1, dp);
+        int exc = 0 + solveMem(W, wt, val, index-1, dp);
+        
+        dp[index][W] =  max(inc, exc);
+        
+        return dp[index][W];
+    }
+    
+    // Tabulation Solution
+    int solveTab(int W, int wt[], int val[], int index)
+    {
+        vector<vector<int>>dp(index, vector<int>(W+1,0));
+        
+        for(int i = wt[0];i<=W;i++)
+        {
+            if(wt[0] <= W)
+            {
+                dp[0][i] = val[0];
+            }
+            else{
+                dp[0][i] = 0;
+            }
+        }
+        
+        for(int i = 1; i<index; i++)
+        {
+            for(int j = 0;j<=W;j++)
+            {
+                int inc = 0;
+                if(wt[i] <= j)
+                    inc = val[i] + dp[i-1][j - wt[i]];
+                int exc = 0 + dp[i-1][j];
+                
+                dp[i][j] =  max(inc, exc);
+                
+                
+            }
+        }
+        return dp[index-1][W];
+    }
+    
+    //Function to return max value that can be put in knapsack of capacity W.
+    int knapSack(int W, int wt[], int val[], int n) 
+    { 
+        //only one item
+        //return solveRec(W, wt, val, n);
+        
+        //vector<vector<int>>dp(n, vector<int>(W+1,-1));
+        //return solveMem(W, wt, val, n-1, dp);
+        
+        
+        vector<vector<int>>dp(n, vector<int>(W+1,-1));
+        return solveTab(W, wt, val, n);
+        
+        
+    }
