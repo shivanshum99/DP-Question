@@ -1,0 +1,60 @@
+class Solution {
+public:
+    int mod = (int)(1e9+7);
+    // recursive solution
+    int solveRec(int row, int col, vector<vector<int>>& arr)
+    {
+        if(row>=0 && col>=0 && arr[row][col]==1)
+        {
+            return 0;
+        }
+        if(row==0 && col==0)
+        {
+            return 1;
+        }
+        if(row<0 || col<0)
+        {
+            return 0;
+        }
+
+        int up = solveRec(row-1,col,arr);
+        int left = solveRec(row,col-1,arr);
+
+        return up+left;
+    }
+
+    //Memoisation Solution
+    int solveMem(int row, int col, vector<vector<int>>dp, vector<vector<int>>& dp)
+    {
+        if(row>=0 && col>=0 && arr[row][col]==1)
+        {
+            return 0;
+        }
+        if(row==0 && col==0)
+        {
+            return 1;
+        }
+        if(row<0 || col<0)
+        {
+            return 0;
+        }
+        if(dp[row][col] != -1)
+        {
+            return dp[row][col];
+        }
+
+        int up = solveMem(row-1,col,arr, dp);
+        int left = solveMem(row,col-1,arr, dp);
+
+        return dp[row][col] = up+left;
+    }
+
+    int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
+        int row = obstacleGrid.size();
+        int col = obstacleGrid[0].size();
+        vector<vector<int>>dp(row, vector<int>(col, -1));
+        
+        //return solveRec(row-1, col-1, obstacleGrid);
+        return solveMem(row-1, col-1, obstacleGrid, dp);
+    }
+};
