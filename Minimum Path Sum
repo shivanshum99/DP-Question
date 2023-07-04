@@ -1,0 +1,47 @@
+class Solution {
+public:
+    //Recursive Solution
+    int solveRec(int row, int col, vector<vector<int>>& grid)
+    {
+        if(row==0 && col==0)
+        {
+            return grid[row][col];
+        }
+        if(row<0 || col<0)
+        {
+            return 1e9;
+        }
+
+        int up = grid[row][col] + solveRec(row-1,col,grid);
+        int left = grid[row][col] + solveRec(row,col-1,grid);
+        return min(up,left);
+    }
+
+    //Memoisation Solution
+    int solveMem(int row, int col, vector<vector<int>>& grid, vector<vector<int>>& dp)
+    {
+        if(row==0 && col==0)
+        {
+            return grid[row][col];
+        }
+        if(row<0 || col<0)
+        {
+            return 1e9;
+        }
+        if(dp[row][col] != -1)
+        {
+            return dp[row][col];
+        }
+
+        int up = grid[row][col] + solveMem(row-1,col,grid,dp);
+        int left = grid[row][col] + solveMem(row,col-1,grid,dp);
+        return dp[row][col] = min(up,left);
+    }
+    int minPathSum(vector<vector<int>>& grid) {
+        int row = grid.size();
+        int col = grid[0].size();
+        vector<vector<int>>dp(row, vector<int>(col,-1));
+        //return solveRec(row-1, col-1, grid);
+        return solveMem(row-1, col-1, grid, dp);
+    }
+};
