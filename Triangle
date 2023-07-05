@@ -1,0 +1,67 @@
+class Solution {
+public:
+    //Recursive Solution
+    int solveRec(int i, int j, int n, vector<vector<int>>& arr)
+    {
+        //base case
+        if(i == n-1)
+        {
+            return arr[n-1][j];
+        }
+
+        int down = arr[i][j] + solveRec(i+1, j, n, arr);
+        int diagonal = arr[i][j] + solveRec(i+1, j+1, n, arr);
+
+        return min(down, diagonal);
+    }
+
+    //Memoisation Solution
+    int solveMem(int i, int j, int n, vector<vector<int>>& arr, vector<vector<int>>& dp)
+    {
+         //base case
+        if(i == n-1)
+        {
+            return arr[n-1][j];
+        }
+        if(dp[i][j] != -1)
+        {
+            return dp[i][j];
+        }
+        int down = arr[i][j] + solveMem(i+1, j, n, arr, dp);
+        int diagonal = arr[i][j] + solveMem(i+1, j+1, n, arr, dp);
+
+        return dp[i][j] = min(down, diagonal);
+    }
+
+    // Tabulation Solution
+    int solveTab(int n, vector<vector<int>>& arr)
+    {
+        vector<vector<int>>dp(n, vector<int>(n, 0));
+
+        //base case
+        for(int j = 0; j<n; j++)
+        {
+            dp[n-1][j] = arr[n-1][j];
+        }
+
+        for(int i = n-2; i>=0; i--)
+        {
+            for(int j = i; j>=0; j--)
+            {
+                int down = arr[i][j] + dp[i+1][j];
+                int diagonal = arr[i][j] + dp[i+1][j+1];
+
+                dp[i][j] = min(down, diagonal);
+            }
+        }
+        return dp[0][0];
+    }
+
+    int minimumTotal(vector<vector<int>>& triangle) {
+        int n = triangle.size();
+        //vector<vector<int>>dp(n, vector<int>(n, -1));
+        //return solveRec(0,0,n,triangle);
+        //return solveMem(0,0,n,triangle,dp);
+        return solveTab(n,triangle);
+    }
+};
