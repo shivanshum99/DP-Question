@@ -1,0 +1,67 @@
+class Solution {
+public:
+    bool solveRec(int index, vector<int>&nums, int target)
+    {
+        //base case
+        int n = nums.size();
+        if(index>=n)
+        {
+            return 0;
+        }
+        if(target < 0)
+        {
+            return 0;
+        }
+        if(target == 0)
+        {
+            return 1;
+        }
+        
+        int include = solveRec(index+1, nums, target-nums[index]);
+        int exclude = solveRec(index+1,nums,target);
+
+        return (include || exclude);
+    }
+    
+    bool solveMem(int index, vector<int>&nums, int target,vector<vector<int>> & dp)
+    {
+        //base case
+        int n = nums.size();
+        if(index>=n)
+        {
+            return 0;
+        }
+        if(target < 0)
+        {
+            return 0;
+        }
+        if(target == 0)
+        {
+            return 1;
+        }
+        if(dp[index][target]!=-1)
+        {
+            return dp[index][target];
+        }
+        int include = solveMem(index+1, nums, target-nums[index],dp);
+        int exclude = solveMem(index+1,nums,target,dp);
+
+        return dp[index][target] = (include || exclude);
+    }
+    bool canPartition(vector<int>& nums) {
+        int sum = 0;
+        for(int i=0;i<nums.size();i++)
+        {
+            sum+=nums[i];
+        }
+        if(sum & 1)// yahi hi galti karuga
+        {
+            return false;
+        }
+        int target = sum/2;
+        int index = 0;
+        // bool ans = solveRec(index,nums, target);
+        vector<vector<int>> dp(nums.size()+1, vector<int>(target+1,-1));
+        return solveMem(index,nums, target,dp);
+    }
+};
