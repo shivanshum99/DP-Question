@@ -1,0 +1,48 @@
+// Using Recursion
+ int solveRec(int ind, vector<int>& nums, int target){
+        //base case
+        if(target == 0){
+            return 1;
+        }
+        if(ind == 0){
+            return target == nums[0];
+        }
+        int notPick = solveRec(ind-1, nums,target);
+        int pick = 0;
+        if(target>=nums[ind]){
+            pick = solveRec(ind-1, nums, target-nums[ind]);
+        }
+
+        return notPick+pick;
+}
+
+//Using Memoisation
+
+ int solveMem(int ind, vector<int>& nums, int target, vector<vector<int>> &dp){
+        //base case
+        if(target == 0){
+            return 1;
+        }
+        if(ind == 0){
+            return target == nums[0];
+        }
+        if(dp[ind][target] != -1) return dp[ind][target];
+
+        int notPick = solveMem(ind-1, nums, target, dp);
+        int pick = 0;
+        if(target>=nums[ind]){
+            pick = solveMem(ind-1, nums, target-nums[ind], dp);
+        }
+
+         dp[ind][target] = notPick+pick;
+         
+        return dp[ind][target];
+}
+
+int findWays(vector<int>& num, int k)
+{
+    int n = arr.size();
+	vector<vector<int>>dp(n, vector<int>(k+1,-1));
+	
+	return solveMem(n-1, arr, k, dp);
+}
