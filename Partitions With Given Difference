@@ -1,0 +1,44 @@
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+intution for this problem:
+given in question: S1-S2 = D and S1>S2
+we can say totSum = S1+S2 then S1 = totSum-S2
+then
+totSum-S2-S2 = D
+So, S2 = (totSum-D)/2; So from this we can say that this is the new modified target and now this question become same as Subset Sum with target K
+
+from this we found that (totSum-D) > 0 and (totSum-D) should be even
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#include <bits/stdc++.h> 
+int mod = (int)(1e9 + 7);
+int solveMem(int ind, vector<int>& nums, int target, vector<vector<int>> &dp){
+        //base case
+        if(ind == 0){
+            if(target == 0 && nums[0] == 0) return 2;
+            if(target == 0 || target == nums[0]) return 1;
+            return 0;
+        }
+        if(dp[ind][target] != -1) return dp[ind][target];
+
+        int notPick = solveMem(ind-1, nums, target, dp);
+        int pick = 0;
+        if(target>=nums[ind]){
+            pick = solveMem(ind-1, nums, target-nums[ind], dp);
+        }
+
+         dp[ind][target] = (notPick+pick)%mod;
+         
+        return dp[ind][target];
+}
+
+int findWays(vector<int> &arr, int k) {
+        int n = arr.size();
+        vector<vector<int>> dp(n, vector<int>(k + 1, -1));
+
+        return solveMem(n - 1, arr, k, dp);
+}
+int countPartitions(int n, int d, vector<int> &arr) {
+    int totSum = 0;
+    for(auto &it: arr) totSum += it;
+    if(totSum - d < 0 || (totSum-d)%2) return false;
+    return findWays(arr, (totSum-d)/2);
+}
