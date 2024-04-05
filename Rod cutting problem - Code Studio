@@ -1,0 +1,22 @@
+int solveMem(int ind, int N, vector<int>& price, vector<vector<int>>& dp){
+
+        if(ind == 0){
+            return N*price[0];
+        }
+
+        if(dp[ind][N] != -1) return dp[ind][N];
+        int notPick = solveMem(ind-1, N, price, dp);
+        int Pick = INT_MIN;
+        int rodLength = ind+1;
+        if(N>=rodLength){
+            Pick = price[ind] + solveMem(ind, N-rodLength, price, dp);
+        }
+
+        return dp[ind][N] = max(Pick, notPick);
+    }
+int cutRod(vector<int> &price, int n)
+{
+	// Write your code here.
+        vector<vector<int>> dp(n, vector<int>(n+1, -1));
+        return solveMem(n-1, n, price,dp);
+}
