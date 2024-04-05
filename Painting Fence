@@ -1,0 +1,20 @@
+using Memoisation:
+
+long long solveMem(int n, int k, vector<int>& dp){
+        long long mod = 1000000007;
+        if(n==1){
+            return k;
+        }
+        if(n==2){
+            return (k+k*(k-1));
+        }
+        if(dp[n] != -1){
+            return dp[n];
+        }
+        dp[n] = (solveMem(n-2,k,dp) + solveMem(n-1,k,dp))*(k-1) % mod; // Expression int ans = (solveRec(n-2) + solve(n-3)) * (k-1)
+        return dp[n];
+}
+long long countWays(int n, int k){
+        vector<int> dp(n+1, -1);
+        return solveMem(n,k,dp);
+}
