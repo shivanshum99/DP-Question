@@ -1,0 +1,101 @@
+class Solution {
+public:
+    int solveRec(string s1, string s2, int i, int j)
+    {
+        //base case
+        if(i== s1.length()){
+            return 0;
+        }
+        if(j == s2.length()){
+            return 0;
+        }
+
+        int ans = 0;
+        if(s1[i] == s2[j])
+        {
+            ans = 1+ solveRec(s1, s2, i+1, j+1);
+        }
+        else{
+            ans = 0+max(solveRec(s1, s2, i, j+1), solveRec(s1, s2, i+1, j));
+        }
+        return ans;
+    }
+
+    int solveMem(string& s1, string& s2, int i, int j,  vector<vector<int>>& dp)
+    {
+        //base case
+        if(i== s1.length()){
+            return 0;
+        }
+        if(j == s2.length()){
+            return 0;
+        }
+        if(dp[i][j]!=-1)
+        {
+            return dp[i][j];
+        }
+        int ans = 0;
+        if(s1[i] == s2[j])
+        {
+            dp[i][j] = 1+ solveMem(s1, s2, i+1, j+1,dp);
+        }
+        else{
+            dp[i][j] = 0+max(solveMem(s1, s2, i, j+1,dp), solveMem(s1, s2, i+1, j,dp));
+        }
+        return dp[i][j];
+    }
+
+
+    int solveTab(string& s1, string& s2)
+    {
+        vector<vector<int>> dp(s1.length()+1, vector<int>(s2.length()+1, 0));
+        int i = 0,j =0;
+        for(i = s1.length()-1; i>=0; i--)
+        {
+            for(j = s2.length()-1; j>=0; j--)
+            {
+                    if(s1[i] == s2[j])
+                    {
+                        dp[i][j] = 1+  dp[i+1][j+1];
+                    }
+                    else{
+                        dp[i][j] = 0+max(dp[i][j+1],dp[i+1][j]);
+                    }
+            }
+        }
+        return dp[0][0];
+    }
+
+    int solveTabSO(string& s1, string& s2)
+    {
+        vector<int>curr(s2.length()+1, 0);
+        vector<int>next(s2.length()+1, 0);
+        int i = 0,j =0;
+        for(i = s1.length()-1; i>=0; i--)
+        {
+            for(j = s2.length()-1; j>=0; j--)
+            {
+                    if(s1[i] == s2[j])
+                    {
+                        curr[j] = 1+  next[j+1];
+                    }
+                    else{
+                        curr[j] = 0+max(curr[j+1],next[j]);
+                    }
+            }
+            next = curr;
+        }
+        return next[0];
+    }
+
+    int longestCommonSubsequence(string text1, string text2) {
+
+        //vector<vector<int>> dp(text1.length(), vector<int>(text2.length(), -1));
+        int i = 0;
+        int j = 0;
+        //return solveRec(text1, text2, i, j);
+        //return solveMem(text1, text2, i, j, dp);
+        // return solveTab(text1, text2);
+        return solveTabSO(text1, text2);
+    }
+};
