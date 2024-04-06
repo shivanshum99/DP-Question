@@ -1,0 +1,48 @@
+class Solution {
+public:
+    int solveRec(vector<int>& prices, int ind, int buy, int limit){
+        if(ind>=prices.size() || limit == 0){
+            return 0;
+        }
+        int profit = 0;
+        if(buy){
+            int buyItProfit = -prices[ind] + solveRec(prices, ind+1, 0, limit);
+            int skipProfit = 0 + solveRec(prices, ind+1, 1, limit);
+            profit = max(buyItProfit, skipProfit);
+        }
+        else //buy = 0
+        {
+            int sellItProfit = prices[ind] + solveRec(prices, ind+1, 1, limit-1);
+            int skipProfit = 0 + solveRec(prices, ind+1, 0, limit);
+            profit = max(sellItProfit,skipProfit);
+        }
+        return profit;
+    }
+    int solveMem(vector<int>& prices, int ind, int buy, int limit, vector<vector<vector<int>>>& dp){
+        if(ind>=prices.size() || limit == 0){
+            return 0;
+        }
+
+        if(dp[ind][buy][limit] != -1) return dp[ind][buy][limit];
+
+        int profit = 0;
+        if(buy){
+            int buyItProfit = -prices[ind] + solveMem(prices, ind+1, 0, limit, dp);
+            int skipProfit = 0 + solveMem(prices, ind+1, 1, limit, dp);
+            profit = max(buyItProfit, skipProfit);
+        }
+        else //buy = 0
+        {
+            int sellItProfit = prices[ind] + solveMem(prices, ind+1, 1, limit-1, dp);
+            int skipProfit = 0 + solveMem(prices, ind+1, 0, limit, dp);
+            profit = max(sellItProfit,skipProfit);
+        }
+        return dp[ind][buy][limit] = profit;
+    }
+    int maxProfit(int k, vector<int>& prices) {
+        //return solveRec(prices, 0, 1, k);
+
+        vector<vector<vector<int>>> dp(prices.size(), vector<vector<int>>(2, vector<int> (k+1, -1)));
+        return solveMem(prices, 0, 1, k, dp);
+    }
+};
